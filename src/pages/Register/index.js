@@ -1,10 +1,31 @@
 import React from "react";
 import logoImg from "../../assets/logo.svg";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
 import "./style.css";
+import api from "../../services/api";
+import { useFormik } from "formik";
 
 export default function Register() {
+  const history = useHistory();
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      email: "",
+      whatsapp: "",
+      city: "",
+      uf: ""
+    },
+    onSubmit: async values => {
+      try {
+        const response = await api.post("ongs", values);
+        alert(`Cadastro Efetuado! Seu Id é ${response.data.id}`);
+        history.push("/");
+      } catch (error) {
+        alert("Erro ao cadastrar, tente novamente");
+      }
+    }
+  });
   return (
     <div className="register-container">
       <div className="content">
@@ -20,13 +41,35 @@ export default function Register() {
             Não tenho cadastro
           </Link>
         </section>
-        <form>
-          <input placeholder="Nome da ONG" />
-          <input type="email" placeholder="E-mail" />
-          <input placeholder="WhatsApp" />
+        <form onSubmit={formik.handleSubmit}>
+          <input
+            onChange={formik.handleChange}
+            name="name"
+            placeholder="Nome da ONG"
+          />
+          <input
+            onChange={formik.handleChange}
+            name="email"
+            type="email"
+            placeholder="E-mail"
+          />
+          <input
+            onChange={formik.handleChange}
+            name="whatsapp"
+            placeholder="WhatsApp"
+          />
           <div className="input-group">
-            <input placeholder="Cidade" />
-            <input placeholder="UF" style={{ width: 80 }} />
+            <input
+              onChange={formik.handleChange}
+              name="city"
+              placeholder="Cidade"
+            />
+            <input
+              onChange={formik.handleChange}
+              name="uf"
+              placeholder="UF"
+              style={{ width: 80 }}
+            />
           </div>
           <button className="button" type="submit">
             Cadastrar
