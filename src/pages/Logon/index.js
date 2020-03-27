@@ -18,7 +18,7 @@ export default function Logon() {
     onSubmit: async value => {
       try {
         let response = await api.post("sessions", value);
-        localStorage.setItem("ongId", value);
+        localStorage.setItem("ongId", value.id);
         localStorage.setItem("ongName", response.data.name);
         history.push("/profile");
       } catch (error) {
