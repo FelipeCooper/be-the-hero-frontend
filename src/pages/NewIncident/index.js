@@ -1,10 +1,32 @@
 import React from "react";
 import "./style.css";
 import logoImg from "../../assets/logo.svg";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
+import { useFormik } from "formik";
+import api from "../../services/api";
 
 export default function NewIncident() {
+  const ongId = localStorage.getItem("ongId");
+  const history = useHistory();
+
+  const formik = useFormik({
+    initialValues: {
+      title: "",
+      description: "",
+      value: ""
+    },
+    onSubmit: async values => {
+      try {
+        api.post("incidents", values, {
+          headers: { Authorization: ongId }
+        });
+        history.push("/profile");
+      } catch (error) {
+        alert("Houve um problema ao cadastrar, tente novamente");
+      }
+    }
+  });
   return (
     <div className="new-incident-container">
       <div className="content">
@@ -20,10 +42,22 @@ export default function NewIncident() {
             Voltar para home
           </Link>
         </section>
-        <form>
-          <input placeholder="Titulo do caso" />
-          <textarea placeholder="Descriçao" />
-          <input placeholder="Valor" />
+        <form onSubmit={formik.handleSubmit}>
+          <input
+            name="title"
+            onChange={formik.handleChange}
+            placeholder="Titulo do caso"
+          />
+          <textarea
+            name="description"
+            onChange={formik.handleChange}
+            placeholder="Descriçao"
+          />
+          <input
+            name="value"
+            onChange={formik.handleChange}
+            placeholder="Valor"
+          />
           <button className="button" type="submit">
             Cadastrar
           </button>
